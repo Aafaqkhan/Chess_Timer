@@ -48,14 +48,11 @@ class PlayerPanel extends StatelessWidget {
         : theme.colorScheme.onSurface.withOpacity(0.6);
 
     Widget panelContent = Container(
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
+      width: double.infinity,
+      decoration: BoxDecoration(color: bgColor),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
           onTap: onTap,
           splashColor: Colors.white.withOpacity(0.1),
           highlightColor: Colors.white.withOpacity(0.05),

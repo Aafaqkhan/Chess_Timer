@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: Obx(
                 () => PlayerPanel(
-                  playerName: 'Player 2',
+                  playerName: tc.player2Name.value,
                   timeInSeconds: tc.player2TimeLeft.value,
                   moveCount: tc.player2Moves.value,
                   isActive:
@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: Obx(
                 () => PlayerPanel(
-                  playerName: 'Player 1',
+                  playerName: tc.player1Name.value,
                   timeInSeconds: tc.player1TimeLeft.value,
                   moveCount: tc.player1Moves.value,
                   isActive:

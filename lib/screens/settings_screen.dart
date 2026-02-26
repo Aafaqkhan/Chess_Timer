@@ -1,32 +1,37 @@
+import 'package:chess_timer/screens/time_selection_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../components/settings_tile.dart';
 import '../utils/theme.dart';
+import '../controllers/theme_controller.dart';
+import '../controllers/timer_controller.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _soundOn = true;
-  bool _vibrationOn = true;
-  bool _darkMode = true;
-  String _selectedColor = 'blue';
-
-  final Map<String, Color> _themeColors = {
+  static final Map<String, Color> _themeColors = {
     'blue': AppTheme.primaryBlue,
     'red': AppTheme.primaryRed,
     'green': AppTheme.primaryGreen,
+    'black': AppTheme.primaryBlack,
+    'white': AppTheme.primaryWhite,
   };
+
+  static String _getSelectedColorName(Color current) {
+    for (var entry in _themeColors.entries) {
+      if (entry.value == current) return entry.key;
+    }
+    return 'blue';
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeCtrl = Get.find<ThemeController>();
+    final tc = Get.find<TimerController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -45,123 +50,148 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         children: [
-          // Section: Game
-          _sectionTitle('Game'),
+          // Section: Time Controls
+          _sectionTitle('Time Controls', theme),
           const SizedBox(height: 8),
 
           SettingsTile(
-            icon: LucideIcons.volume2,
-            title: 'Sound',
-            subtitle: 'Play sounds on move and timeout',
-            trailing: Switch.adaptive(
-              value: _soundOn,
-              activeColor: theme.colorScheme.primary,
-              onChanged: (v) => setState(() => _soundOn = v),
+            icon: LucideIcons.clock,
+            title: "Time Controls",
+            subtitle: "Set the time controls for the game",
+            trailing: const Icon(LucideIcons.chevronRight, size: 18),
+            onTap: () => Get.to(
+              () => const TimeSelectionScreen(),
+              transition: Transition.downToUp,
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Section: Game
+          _sectionTitle('Game', theme),
+          const SizedBox(height: 8),
+
+          Obx(
+            () => SettingsTile(
+              icon: LucideIcons.volume2,
+              title: 'Sound',
+              subtitle: 'Play sounds on move and timeout',
+              trailing: Switch.adaptive(
+                value: tc.isSoundOn.value,
+                activeColor: theme.colorScheme.primary,
+                onChanged: (v) {
+                  tc.updateSound(v);
+                  if (v) {
+                    SystemSound.play(SystemSoundType.click);
+                  }
+                },
+              ),
             ),
           ),
           const SizedBox(height: 8),
 
-          SettingsTile(
-            icon: LucideIcons.smartphone,
-            title: 'Vibration',
-            subtitle: 'Haptic feedback on move',
-            trailing: Switch.adaptive(
-              value: _vibrationOn,
-              activeColor: theme.colorScheme.primary,
-              onChanged: (v) => setState(() => _vibrationOn = v),
+          Obx(
+            () => SettingsTile(
+              icon: LucideIcons.smartphone,
+              title: 'Vibration',
+              subtitle: 'Haptic feedback on move',
+              trailing: Switch.adaptive(
+                value: tc.isVibrationOn.value,
+                activeColor: theme.colorScheme.primary,
+                onChanged: (v) {
+                  tc.updateVibration(v);
+                  if (v) {
+                    HapticFeedback.mediumImpact();
+                  }
+                },
+              ),
             ),
           ),
 
           const SizedBox(height: 24),
 
           // Section: Appearance
-          _sectionTitle('Appearance'),
+          _sectionTitle('Appearance', theme),
           const SizedBox(height: 8),
 
-          SettingsTile(
-            icon: LucideIcons.moon,
-            title: 'Dark Mode',
-            subtitle: 'Use dark theme',
-            trailing: Switch.adaptive(
-              value: _darkMode,
-              activeColor: theme.colorScheme.primary,
-              onChanged: (v) {
-                setState(() => _darkMode = v);
-                Get.changeThemeMode(v ? ThemeMode.dark : ThemeMode.light);
-              },
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          SettingsTile(
-            icon: LucideIcons.palette,
-            title: 'Theme Color',
-            subtitle:
-                _selectedColor[0].toUpperCase() + _selectedColor.substring(1),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: _themeColors.entries.map((entry) {
-                final isSelected = _selectedColor == entry.key;
-                return GestureDetector(
-                  onTap: () {
-                    setState(() => _selectedColor = entry.key);
-                    Get.changeTheme(
-                      _darkMode
-                          ? AppTheme.darkTheme(entry.value)
-                          : AppTheme.lightTheme(entry.value),
-                    );
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.only(left: 8),
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: entry.value,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isSelected ? Colors.white : Colors.transparent,
-                        width: 3,
+          Obx(() {
+            final selectedName = _getSelectedColorName(
+              themeCtrl.primaryColor.value,
+            );
+            return SettingsTile(
+              icon: LucideIcons.palette,
+              title: 'Theme Color',
+              subtitle:
+                  selectedName[0].toUpperCase() + selectedName.substring(1),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: _themeColors.entries.map((entry) {
+                  final isSelected =
+                      themeCtrl.primaryColor.value == entry.value;
+                  return GestureDetector(
+                    onTap: () {
+                      themeCtrl.changeColor(entry.value);
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.only(left: 8),
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: entry.value,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected ? Colors.white : Colors.transparent,
+                          width: 3,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: entry.value.withOpacity(0.5),
+                                  blurRadius: 8,
+                                ),
+                              ]
+                            : [],
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: entry.value.withOpacity(0.5),
-                                blurRadius: 8,
-                              ),
-                            ]
-                          : [],
+                      child: isSelected
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 16,
+                            )
+                          : null,
                     ),
-                    child: isSelected
-                        ? const Icon(Icons.check, color: Colors.white, size: 16)
-                        : null,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+                  );
+                }).toList(),
+              ),
+            );
+          }),
 
           const SizedBox(height: 24),
 
           // Section: Players
-          _sectionTitle('Players'),
+          _sectionTitle('Players', theme),
           const SizedBox(height: 8),
 
-          SettingsTile(
-            icon: LucideIcons.user,
-            title: 'Player 1 Name',
-            subtitle: 'Player 1',
-            trailing: const Icon(LucideIcons.chevronRight, size: 18),
-            onTap: () => _editPlayerName(1),
+          Obx(
+            () => SettingsTile(
+              icon: LucideIcons.user,
+              title: 'Player 1 Name',
+              subtitle: tc.player1Name.value,
+              trailing: const Icon(LucideIcons.chevronRight, size: 18),
+              onTap: () => _editPlayerName(1),
+            ),
           ),
           const SizedBox(height: 8),
 
-          SettingsTile(
-            icon: LucideIcons.user,
-            title: 'Player 2 Name',
-            subtitle: 'Player 2',
-            trailing: const Icon(LucideIcons.chevronRight, size: 18),
-            onTap: () => _editPlayerName(2),
+          Obx(
+            () => SettingsTile(
+              icon: LucideIcons.user,
+              title: 'Player 2 Name',
+              subtitle: tc.player2Name.value,
+              trailing: const Icon(LucideIcons.chevronRight, size: 18),
+              onTap: () => _editPlayerName(2),
+            ),
           ),
 
           const SizedBox(height: 32),
@@ -182,20 +212,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _sectionTitle(String title) {
+  Widget _sectionTitle(String title, ThemeData theme) {
     return Text(
       title.toUpperCase(),
       style: GoogleFonts.outfit(
         fontSize: 12,
         fontWeight: FontWeight.w600,
-        color: Theme.of(context).colorScheme.primary,
+        color: theme.colorScheme.primary,
         letterSpacing: 1.5,
       ),
     );
   }
 
   void _editPlayerName(int playerNumber) {
-    final controller = TextEditingController(text: 'Player $playerNumber');
+    final tc = Get.find<TimerController>();
+    final currentName = playerNumber == 1
+        ? tc.player1Name.value
+        : tc.player2Name.value;
+    final controller = TextEditingController(text: currentName);
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -212,7 +246,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
-              // TODO: Persist via StorageService
+              final name = controller.text.trim();
+              if (name.isNotEmpty) {
+                tc.updatePlayerName(playerNumber, name);
+              }
               Get.back();
             },
             child: const Text('Save'),
