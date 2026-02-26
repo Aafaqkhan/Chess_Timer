@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'utils/theme.dart';
 import 'services/storage_service.dart';
 import 'services/audio_service.dart';
 import 'controllers/timer_controller.dart';
+import 'controllers/theme_controller.dart';
 import 'screens/home_screen.dart';
 
 void main() async {
@@ -13,7 +13,8 @@ void main() async {
   await Get.putAsync(() => StorageService().init());
   await Get.putAsync(() => AudioService().init());
 
-  // Register controller
+  // Register controllers
+  Get.put(ThemeController());
   Get.put(TimerController());
 
   runApp(const ChessTimerApp());
@@ -24,13 +25,15 @@ class ChessTimerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Chess Timer',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme(AppTheme.primaryBlue),
-      darkTheme: AppTheme.darkTheme(AppTheme.primaryBlue),
-      themeMode: ThemeMode.system,
-      home: const HomeScreen(),
+    final ThemeController themeCtrl = Get.find<ThemeController>();
+
+    return Obx(
+      () => GetMaterialApp(
+        title: 'Chess Timer',
+        debugShowCheckedModeBanner: false,
+        theme: themeCtrl.currentTheme,
+        home: const HomeScreen(),
+      ),
     );
   }
 }

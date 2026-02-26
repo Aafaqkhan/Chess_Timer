@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import '../models/time_control.dart';
 import '../utils/constants.dart';
+import '../services/storage_service.dart';
 
 enum PlayerTurn { none, player1, player2 }
 
@@ -24,12 +25,63 @@ class TimerController extends GetxController {
   var isGameOver = false.obs;
   var turn = PlayerTurn.none.obs;
 
+  // Player names
+  var player1Name = 'Player 1'.obs;
+  var player2Name = 'Player 2'.obs;
+
+  // Settings
+  var isSoundOn = true.obs;
+  var isVibrationOn = true.obs;
+
   Timer? _timer;
 
   @override
   void onInit() {
     super.onInit();
+    _loadPlayerNames();
     resetGame();
+  }
+
+  void _loadPlayerNames() {
+    final storage = Get.find<StorageService>();
+    final settings = storage.loadSettings();
+    player1Name.value = settings.player1Name;
+    player2Name.value = settings.player2Name;
+    isSoundOn.value = settings.isSoundOn;
+    isVibrationOn.value = settings.isVibrationOn;
+  }
+
+  void updateSound(bool value) {
+    isSoundOn.value = value;
+    final storage = Get.find<StorageService>();
+    final settings = storage.loadSettings();
+    settings.isSoundOn = value;
+    storage.saveSettings(settings);
+  }
+
+  void updateVibration(bool value) {
+    isVibrationOn.value = value;
+    final storage = Get.find<StorageService>();
+    final settings = storage.loadSettings();
+    settings.isVibrationOn = value;
+    storage.saveSettings(settings);
+  }
+
+  void updatePlayerName(int playerNumber, String name) {
+    if (playerNumber == 1) {
+      player1Name.value = name;
+    } else {
+      player2Name.value = name;
+    }
+    // Persist
+    final storage = Get.find<StorageService>();
+    final settings = storage.loadSettings();
+    if (playerNumber == 1) {
+      settings.player1Name = name;
+    } else {
+      settings.player2Name = name;
+    }
+    storage.saveSettings(settings);
   }
 
   @override
