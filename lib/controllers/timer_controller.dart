@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chess_timer/services/audio_service.dart';
 import 'package:get/get.dart';
 import '../models/time_control.dart';
 import '../utils/constants.dart';
@@ -7,6 +8,8 @@ import '../services/storage_service.dart';
 enum PlayerTurn { none, player1, player2 }
 
 class TimerController extends GetxController {
+  final AudioService _audioService = Get.find<AudioService>();
+
   final bool isCustom;
 
   TimerController({this.isCustom = false});
@@ -162,6 +165,10 @@ class TimerController extends GetxController {
           : PlayerTurn.player1;
       startTimer();
       // Optional: Add a move? Typically the first tap doesn't count as a move, just starts the clock.
+
+      _audioService.playTickSound(isSoundOn.value);
+      _audioService.triggerVibration(isVibrationOn.value);
+
       return;
     }
 
@@ -185,7 +192,12 @@ class TimerController extends GetxController {
     }
 
     // Play sound / vibrate
-    // TODO: integrate audio & vibration here
+
+    // 🔊 Play move sound
+    _audioService.playTickSound(isSoundOn.value);
+
+    // 📳 Trigger vibration
+    _audioService.triggerVibration(isVibrationOn.value);
   }
 
   void timeOut(PlayerTurn losingPlayer) {
