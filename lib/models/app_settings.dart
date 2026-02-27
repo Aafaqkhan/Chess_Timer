@@ -9,7 +9,7 @@ class AppSettings {
   AppSettings({
     this.isSoundOn = true,
     this.isVibrationOn = true,
-    this.themeColor = 'blue',
+    this.themeColor = 'green',
     this.isDarkMode = true,
     this.player1Name = 'Player 1',
     this.player2Name = 'Player 2',
@@ -30,7 +30,7 @@ class AppSettings {
     return AppSettings(
       isSoundOn: json['isSoundOn'] ?? true,
       isVibrationOn: json['isVibrationOn'] ?? true,
-      themeColor: json['themeColor'] ?? 'blue',
+      themeColor: json['themeColor'] ?? 'green',
       isDarkMode: json['isDarkMode'] ?? true,
       player1Name: json['player1Name'] ?? 'Player 1',
       player2Name: json['player2Name'] ?? 'Player 2',

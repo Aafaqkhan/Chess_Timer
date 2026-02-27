@@ -6,12 +6,14 @@ class TimeControlChip extends StatelessWidget {
   final TimeControl timeControl;
   final bool isSelected;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   const TimeControlChip({
     super.key,
     required this.timeControl,
     required this.isSelected,
     required this.onTap,
+    this.onLongPress,
   });
 
   @override
@@ -26,6 +28,7 @@ class TimeControlChip extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
           onTap: onTap,
+          onLongPress: onLongPress,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -33,8 +36,8 @@ class TimeControlChip extends StatelessWidget {
               color: isSelected
                   ? theme.colorScheme.primary
                   : theme.brightness == Brightness.dark
-                  ? const Color(0xFF2A2A2A)
-                  : const Color(0xFFF0F0F0),
+                      ? const Color(0xFF2A2A2A)
+                      : const Color(0xFFF0F0F0),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: isSelected
@@ -52,30 +55,105 @@ class TimeControlChip extends StatelessWidget {
                     ]
                   : [],
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Stack(
+              alignment: Alignment.center, // ✅ center everything
+              clipBehavior: Clip.none,
               children: [
-                Text(
-                  timeControl.displayFormat,
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: isSelected
-                        ? Colors.white
-                        : theme.colorScheme.onSurface,
+                /// CENTERED CONTENT
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.center, // ✅ horizontal center
+                    mainAxisAlignment:
+                        MainAxisAlignment.center, // ✅ vertical center
+                    children: [
+                      Text(
+                        timeControl.displayFormat,
+                        textAlign: TextAlign.center, // ✅ text center
+                        style: GoogleFonts.robotoMono(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: isSelected
+                              ? Colors.white
+                              : theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        timeControl.category,
+                        textAlign: TextAlign.center, // ✅ text center
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: isSelected
+                              ? Colors.white.withOpacity(0.8)
+                              : theme.colorScheme.onSurface.withOpacity(0.5),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  timeControl.category,
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: isSelected
-                        ? Colors.white.withOpacity(0.8)
-                        : theme.colorScheme.onSurface.withOpacity(0.5),
+
+                /// 🔴 DELETE ICON (only for custom controls)
+                if (timeControl.isCustom)
+                  Positioned(
+                    top: -12,
+                    right: -12,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(30),
+                        onTap: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: const Text("Delete Time Control"),
+                              content: const Text(
+                                "Are you sure you want to delete this custom time control?",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, true),
+                                  child: const Text(
+                                    "Delete",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            onLongPress?.call();
+                          }
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          alignment: Alignment.center,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
               ],
             ),
           ),

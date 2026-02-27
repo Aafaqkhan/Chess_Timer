@@ -7,6 +7,10 @@ import '../services/storage_service.dart';
 enum PlayerTurn { none, player1, player2 }
 
 class TimerController extends GetxController {
+  final bool isCustom;
+
+  TimerController({this.isCustom = false});
+
   // Current Time Control (default to Blitz 5+0 initially)
   var currentTimeControl = AppConstants.defaultTimeControls
       .firstWhere((tc) => tc.name == '5+0')
