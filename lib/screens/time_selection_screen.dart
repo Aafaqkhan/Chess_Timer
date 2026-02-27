@@ -7,6 +7,7 @@ import '../models/time_control.dart';
 import '../utils/constants.dart';
 import '../components/time_control_chip.dart';
 import '../components/custom_time_picker.dart';
+import '../services/storage_service.dart';
 
 class TimeSelectionScreen extends StatefulWidget {
   const TimeSelectionScreen({super.key});
@@ -35,6 +36,9 @@ class _TimeSelectionScreenState extends State<TimeSelectionScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: _categories.length, vsync: this);
+    _customTimeControls.addAll(
+      Get.find<StorageService>().loadCustomTimeControls(),
+    );
   }
 
   @override
@@ -59,7 +63,12 @@ class _TimeSelectionScreenState extends State<TimeSelectionScreen>
       backgroundColor: Colors.transparent,
       builder: (_) => CustomTimePicker(
         onConfirm: (tc) {
-          setState(() => _customTimeControls.add(tc));
+          setState(() {
+            _customTimeControls.add(tc);
+            Get.find<StorageService>().saveCustomTimeControls(
+              _customTimeControls,
+            );
+          });
         },
       ),
     );
@@ -139,8 +148,8 @@ class _TimeSelectionScreenState extends State<TimeSelectionScreen>
           return Padding(
             padding: const EdgeInsets.all(16),
             child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: category == AppConstants.categoryCustom ? 2 : 3,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
                 childAspectRatio: 1.1,
@@ -158,6 +167,66 @@ class _TimeSelectionScreenState extends State<TimeSelectionScreen>
                       _timerController.setTimeControl(control);
                       Get.back();
                     },
+                    onLongPress: category == AppConstants.categoryCustom
+                        ? () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(
+                                  'Delete Time Control',
+                                  style: GoogleFonts.outfit(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                content: Text(
+                                  'Are you sure you want to delete this custom time control?',
+                                  style: GoogleFonts.outfit(),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Get.back(),
+                                    child: Text(
+                                      'Cancel',
+                                      style: GoogleFonts.outfit(),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _customTimeControls.remove(control);
+                                        Get.find<StorageService>()
+                                            .saveCustomTimeControls(
+                                              _customTimeControls,
+                                            );
+                                      });
+                                      Get.back(); // close dialog
+
+                                      // If the deleted control was the currently selected one,
+                                      // we might want to revert to a default to avoid errors
+                                      if (_timerController
+                                              .currentTimeControl
+                                              .value
+                                              .id ==
+                                          control.id) {
+                                        _timerController.setTimeControl(
+                                          AppConstants
+                                              .defaultTimeControls
+                                              .first,
+                                        );
+                                      }
+                                    },
+                                    child: Text(
+                                      'Delete',
+                                      style: GoogleFonts.outfit(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        : null,
                   ),
                 );
               },
