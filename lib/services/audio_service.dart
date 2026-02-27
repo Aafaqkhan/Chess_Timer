@@ -19,18 +19,18 @@ class AudioService extends GetxService {
     if (!isEnabled) return;
     try {
       // In a real app we need corresponding asset files.
-      // await _audioPlayer.play(AssetSource('sounds/tick.mp3'));
+      await _audioPlayer.play(AssetSource('sounds/tick_short_4.mp3'));
     } catch (e) {
-      print("Error playing sound: \$e");
+      print("Error playing sound: $e 11");
     }
   }
 
   Future<void> playTimeoutSound(bool isEnabled) async {
     if (!isEnabled) return;
     try {
-      // await _audioPlayer.play(AssetSource('sounds/timeout.mp3'));
+      await _audioPlayer.play(AssetSource('sounds/timeout.mp3'));
     } catch (e) {
-      print("Error playing sound: \$e");
+      print("Error playing sound: $e 22");
     }
   }
 

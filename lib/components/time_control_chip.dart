@@ -36,8 +36,8 @@ class TimeControlChip extends StatelessWidget {
               color: isSelected
                   ? theme.colorScheme.primary
                   : theme.brightness == Brightness.dark
-                      ? const Color(0xFF2A2A2A)
-                      : const Color(0xFFF0F0F0),
+                  ? const Color(0xFF2A2A2A)
+                  : const Color(0xFFF0F0F0),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: isSelected
@@ -105,34 +105,7 @@ class TimeControlChip extends StatelessWidget {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(30),
                         onTap: () async {
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              title: const Text("Delete Time Control"),
-                              content: const Text(
-                                "Are you sure you want to delete this custom time control?",
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, false),
-                                  child: const Text("Cancel"),
-                                ),
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, true),
-                                  child: const Text(
-                                    "Delete",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-
-                          if (confirm == true) {
-                            onLongPress?.call();
-                          }
+                          onLongPress?.call();
                         },
                         child: Container(
                           width: 40,
