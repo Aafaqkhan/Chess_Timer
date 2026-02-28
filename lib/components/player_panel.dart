@@ -35,7 +35,7 @@ class PlayerPanel extends StatelessWidget {
     } else if (isGameOver && !isWinner) {
       bgColor = Colors.red.shade800.withOpacity(0.6);
     } else if (isActive) {
-      bgColor = theme.colorScheme.primary;
+      bgColor = theme.colorScheme.primary.withOpacity(0.9);
     } else {
       bgColor = theme.brightness == Brightness.dark
           ? const Color(0xFF2A2A2A)
