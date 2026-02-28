@@ -98,8 +98,8 @@ class TimeControlChip extends StatelessWidget {
                 /// 🔴 DELETE ICON (only for custom controls)
                 if (timeControl.isCustom)
                   Positioned(
-                    top: -12,
-                    right: -12,
+                    top: -16,
+                    right: -22,
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
@@ -108,18 +108,18 @@ class TimeControlChip extends StatelessWidget {
                           onLongPress?.call();
                         },
                         child: Container(
-                          width: 40,
-                          height: 40,
+                          width: 50,
+                          height: 50,
                           alignment: Alignment.center,
                           child: Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(4),
                             decoration: const BoxDecoration(
                               color: Colors.red,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.close,
-                              size: 16,
+                              size: 14,
                               color: Colors.white,
                             ),
                           ),

@@ -5,6 +5,7 @@ class AppSettings {
   bool isDarkMode;
   String player1Name;
   String player2Name;
+  String selectedTimeId;
 
   AppSettings({
     this.isSoundOn = true,
@@ -13,6 +14,7 @@ class AppSettings {
     this.isDarkMode = true,
     this.player1Name = 'Player 1',
     this.player2Name = 'Player 2',
+    this.selectedTimeId = 'bl5_0',
   });
 
   Map<String, dynamic> toJson() {
@@ -23,6 +25,7 @@ class AppSettings {
       'isDarkMode': isDarkMode,
       'player1Name': player1Name,
       'player2Name': player2Name,
+      'selectedTimeId': selectedTimeId,
     };
   }
 
@@ -34,6 +37,7 @@ class AppSettings {
       isDarkMode: json['isDarkMode'] ?? true,
       player1Name: json['player1Name'] ?? 'Player 1',
       player2Name: json['player2Name'] ?? 'Player 2',
+      selectedTimeId: json['selectedTimeId'] ?? 'bl5_0',
     );
   }
 }

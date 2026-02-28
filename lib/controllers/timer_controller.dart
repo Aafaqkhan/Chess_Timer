@@ -56,6 +56,26 @@ class TimerController extends GetxController {
     player2Name.value = settings.player2Name;
     isSoundOn.value = settings.isSoundOn;
     isVibrationOn.value = settings.isVibrationOn;
+
+    // Load persisted selected time control
+    final savedTimeId = settings.selectedTimeId;
+
+    final defaultMatches = AppConstants.defaultTimeControls.where(
+      (tc) => tc.id == savedTimeId,
+    );
+    if (defaultMatches.isNotEmpty) {
+      currentTimeControl.value = defaultMatches.first;
+    } else {
+      final customTimes = storage.loadCustomTimeControls();
+      final customMatches = customTimes.where((tc) => tc.id == savedTimeId);
+      if (customMatches.isNotEmpty) {
+        currentTimeControl.value = customMatches.first;
+      } else {
+        currentTimeControl.value = AppConstants.defaultTimeControls.firstWhere(
+          (tc) => tc.name == '5+0',
+        );
+      }
+    }
   }
 
   void updateSound(bool value) {
@@ -99,6 +119,13 @@ class TimerController extends GetxController {
 
   void setTimeControl(TimeControl tc) {
     currentTimeControl.value = tc;
+
+    // Save to settings
+    final storage = Get.find<StorageService>();
+    final settings = storage.loadSettings();
+    settings.selectedTimeId = tc.id;
+    storage.saveSettings(settings);
+
     resetGame();
   }
 
@@ -204,7 +231,10 @@ class TimerController extends GetxController {
     _timer?.cancel();
     isPlaying.value = false;
     isGameOver.value = true;
-    // TODO: integrate timeout sound
+
+    // Play timeout sound and vibrate
+    _audioService.playTimeoutSound(isSoundOn.value);
+    _audioService.triggerVibration(isVibrationOn.value);
   }
 
   String formatTime(int totalSeconds) {
