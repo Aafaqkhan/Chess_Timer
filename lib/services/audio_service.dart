@@ -11,7 +11,7 @@ class AudioService extends GetxService {
   bool _canVibrate = false;
 
   Future<AudioService> init() async {
-    _canVibrate = await Vibration.hasVibrator() ?? false;
+    _canVibrate = await Vibration.hasVibrator();
     return this;
   }
 

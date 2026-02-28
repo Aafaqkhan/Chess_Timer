@@ -231,7 +231,10 @@ class TimerController extends GetxController {
     _timer?.cancel();
     isPlaying.value = false;
     isGameOver.value = true;
-    // TODO: integrate timeout sound
+
+    // Play timeout sound and vibrate
+    _audioService.playTimeoutSound(isSoundOn.value);
+    _audioService.triggerVibration(isVibrationOn.value);
   }
 
   String formatTime(int totalSeconds) {

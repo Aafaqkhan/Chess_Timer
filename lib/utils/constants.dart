@@ -1,7 +1,7 @@
 import '../models/time_control.dart';
 
 class AppConstants {
-  static const String appName = 'Chess Timer';
+  static const String appName = 'BlitzClock – Chess Timer';
 
   // Categories
   static const String categoryBullet = 'Bullet';

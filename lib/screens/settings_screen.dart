@@ -199,7 +199,7 @@ class SettingsScreen extends StatelessWidget {
           // App info
           Center(
             child: Text(
-              'Chess Timer v1.0.0',
+              'BlitzClock – Chess Timer v1.0.0',
               style: GoogleFonts.outfit(
                 fontSize: 13,
                 color: theme.colorScheme.onSurface.withOpacity(0.3),
