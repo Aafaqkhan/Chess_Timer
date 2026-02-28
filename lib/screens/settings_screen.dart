@@ -16,7 +16,6 @@ class SettingsScreen extends StatelessWidget {
     'blue': AppTheme.primaryBlue,
     'red': AppTheme.primaryRed,
     'green': AppTheme.primaryGreen,
-    'black': AppTheme.primaryBlack,
     'white': AppTheme.primaryWhite,
   };
 

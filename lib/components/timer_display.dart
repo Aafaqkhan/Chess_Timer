@@ -45,7 +45,7 @@ class TimerDisplay extends StatelessWidget {
     return AnimatedDefaultTextStyle(
       duration: const Duration(milliseconds: 300),
       style: GoogleFonts.robotoMono(
-        fontSize: isActive ? 72 : 60,
+        fontSize: isActive ? 82 : 70,
         fontWeight: FontWeight.w700,
         color: textColor,
         letterSpacing: 2,
