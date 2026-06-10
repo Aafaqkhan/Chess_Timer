@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../components/settings_tile.dart';
 import '../utils/theme.dart';
 import '../controllers/theme_controller.dart';
@@ -194,18 +194,6 @@ class SettingsScreen extends StatelessWidget {
           ),
 
           const SizedBox(height: 32),
-
-          // App info
-          Center(
-            child: Text(
-              'BlitzClock – Chess Timer v1.0.0',
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                color: theme.colorScheme.onSurface.withOpacity(0.3),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
         ],
       ),
     );

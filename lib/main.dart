@@ -29,7 +29,7 @@ class ChessTimerApp extends StatelessWidget {
 
     return Obx(
       () => GetMaterialApp(
-        title: 'BlitzClock – Chess Timer',
+        title: 'Blitz Clock',
         debugShowCheckedModeBanner: false,
         theme: themeCtrl.currentTheme,
         home: const HomeScreen(),

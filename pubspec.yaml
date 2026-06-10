@@ -18,7 +18,7 @@ dependencies:
   vibration: ^3.1.7
   google_fonts: ^8.0.2
   flutter_svg: ^2.2.3
-  lucide_icons: ^0.257.0
+  lucide_icons_flutter: ^3.1.14+2
 
 dev_dependencies:
   flutter_test:
@@ -37,14 +37,14 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo_new.png"
+  image_path: "assets/images/logo.png"
 
 flutter_native_splash:
   color: "#ffffff"
-  image: "assets/images/logo_new.png"
+  image: "assets/images/logo.png"
   
   android_12:
-    image: "assets/images/logo_new.png"
+    image: "assets/images/logo.png"
     icon_background_color: "#ffffff"
     
   android: true
